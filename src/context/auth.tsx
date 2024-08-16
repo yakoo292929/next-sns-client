@@ -12,6 +12,7 @@
 
 import apiClient from "@/lib/apiClient";
 import React, { ReactNode, useContext, useEffect, useState } from "react";
+import { AxiosResponse } from 'axios';
 
 /////////////////////////////////////////////
 // AuthProvider型定義
@@ -35,6 +36,7 @@ interface AuthContextType {
 
 }
 
+
 /////////////////////////////////////////////
 // AuthContext作成・デフォルト値設定
 /////////////////////////////////////////////
@@ -47,6 +49,28 @@ const AuthContext = React.createContext<AuthContextType>({
 });
 
 
+/////////////////////////////////////////////
+// ユーザー情報の型を定義
+/////////////////////////////////////////////
+interface User {
+
+  id: number;
+  username: string;
+  email: string;
+
+}
+
+
+/////////////////////////////////////////////
+// APIレスポンスの型を定義
+/////////////////////////////////////////////
+interface UserResponse {
+
+  user: User;
+
+}
+
+
 export const useAuth = () => {
   return useContext(AuthContext);
 };
@@ -57,24 +81,42 @@ export const useAuth = () => {
 /////////////////////////////////////////////
 export const AuthProvider = ({ children }: AuthProviderProps ) => {
 
-  const [ user, setUser ] = useState<null | {id: number, email: string, username: string}>(null);
+  // const [ user, setUser ] = useState<null | {id: number, email: string, username: string}>(null);
+  const [ user, setUser ] = useState<null | User>(null);
+
 
   useEffect(() => {
 
+    // const token = localStorage.getItem('auth_token');
+    // if (token) {
+    //     // ヘッダー情報セット
+    //     apiClient.defaults.headers['Authorization'] = `Bearer ${token}`;
+
+    //     // ユーザー情報取得 API
+    //     apiClient.get('/users/find')
+    //     .then((res) => {
+    //       setUser(res.data.user);
+    //     })
+    //     .catch((err) => {
+    //       console.log(err);
+    //     });
+
+    // }
+
     const token = localStorage.getItem('auth_token');
     if (token) {
+
         // ヘッダー情報セット
         apiClient.defaults.headers['Authorization'] = `Bearer ${token}`;
 
         // ユーザー情報取得 API
-        apiClient.get('/users/find')
-        .then((res) => {
-          setUser(res.data.user);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-
+        apiClient.get<UserResponse>('/users/find')
+          .then((res: AxiosResponse<UserResponse>) => { 
+            setUser(res.data.user);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
     }
 
   }, []);
