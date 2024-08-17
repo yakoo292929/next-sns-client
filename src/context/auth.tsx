@@ -87,22 +87,6 @@ export const AuthProvider = ({ children }: AuthProviderProps ) => {
 
   useEffect(() => {
 
-    // const token = localStorage.getItem('auth_token');
-    // if (token) {
-    //     // ヘッダー情報セット
-    //     apiClient.defaults.headers['Authorization'] = `Bearer ${token}`;
-
-    //     // ユーザー情報取得 API
-    //     apiClient.get('/users/find')
-    //     .then((res) => {
-    //       setUser(res.data.user);
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //     });
-
-    // }
-
     const token = localStorage.getItem('auth_token');
     if (token) {
 
@@ -111,7 +95,7 @@ export const AuthProvider = ({ children }: AuthProviderProps ) => {
 
         // ユーザー情報取得 API
         apiClient.get<UserResponse>('/users/find')
-          .then((res: AxiosResponse<UserResponse>) => { 
+          .then((res: AxiosResponse<UserResponse>) => {
             setUser(res.data.user);
           })
           .catch((err) => {
